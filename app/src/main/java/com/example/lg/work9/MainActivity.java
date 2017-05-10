@@ -128,32 +128,37 @@ public class MainActivity extends AppCompatActivity {
         public void getData(final String name, String url){
             url = urlCheck(url);
             final String cmp_url = url;
-            boolean flag = true;
-            for(Url now : favor_list){
-                if(now.getUrl().equals(cmp_url)){
-                    flag = false;
-                    break;
-                }
-            }
-            if(flag) {
-                favor_list.add(new Url(name, cmp_url));
-                adapter.notifyDataSetChanged();
-            }
-            else{
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    boolean flag = true;
+                    for(Url now : favor_list){
+                        if(now.getUrl().equals(cmp_url)){
+                            flag = false;
+                            break;
+                        }
+                    }
+                    if(flag) {
+                        favor_list.add(new Url(name, cmp_url));
+                        adapter.notifyDataSetChanged();
+                    }
+                    else{
                         webView.loadUrl("javascript:displayMsg()");
                     }
-                });
-            }
+                }
+            });
         }
         @JavascriptInterface
         public void vi_url(){
-            if(url_space.getVisibility()==View.GONE) {
-                url_space.startAnimation(animBottom);
-                Log.d("visible",Integer.toString(View.VISIBLE)+" "+Integer.toString(url_space.getVisibility()));
-            }
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if(url_space.getVisibility()==View.GONE) {
+                        url_space.startAnimation(animBottom);
+                        Log.d("visible",Integer.toString(View.VISIBLE)+" "+Integer.toString(url_space.getVisibility()));
+                    }
+                }
+            });
 //            url_space.setVisibility(View.VISIBLE);
         }
     }
@@ -167,7 +172,12 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                url_space.setVisibility(View.GONE);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        url_space.setVisibility(View.GONE);
+                    }
+                });
             }
 
             @Override
@@ -179,12 +189,17 @@ public class MainActivity extends AppCompatActivity {
         animBottom.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        url_space.setVisibility(View.VISIBLE);
+                    }
+                });
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                url_space.setVisibility(View.VISIBLE);
+
             }
 
             @Override
