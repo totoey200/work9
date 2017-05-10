@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == 1){
+        if(item.getItemId() == 1){//asset의 html파일을 열어줌
             list.setVisibility(View.GONE);
             webView.setVisibility(View.VISIBLE);
             webView.loadUrl("file:///android_asset/www/urladd.html");
@@ -112,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 url_space.startAnimation(animTop);
             }
         }
-        else if(item.getItemId() == 2){
+        else if(item.getItemId() == 2){//즐겨찾기목록을 보여줌
             if(url_space.getVisibility()==View.VISIBLE) {
                 url_space.startAnimation(animTop);
             }
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
 
     class JSMethods{
 
-        @JavascriptInterface
+        @JavascriptInterface //즐겨찾기추가를 했을 때 즐겨찾기 정보를 가져오는 method
         public void getData(final String name, String url){
             url = urlCheck(url);
             final String cmp_url = url;
@@ -143,13 +143,13 @@ public class MainActivity extends AppCompatActivity {
                         adapter.notifyDataSetChanged();
                     }
                     else{
-                        webView.loadUrl("javascript:displayMsg()");
+                        webView.loadUrl("javascript:displayMsg()");//자바스크립트 method사용방법
                     }
                 }
             });
         }
         @JavascriptInterface
-        public void vi_url(){
+        public void vi_url(){ //url보이기를 눌렀을 때 url_space를 보여주게 하는 method
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -159,11 +159,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
-//            url_space.setVisibility(View.VISIBLE);
         }
     }
     public void animinit(){
-        animTop = AnimationUtils.loadAnimation(this,R.anim.translate_top);
+        animTop = AnimationUtils.loadAnimation(this,R.anim.translate_top);//url_space사라지는 애니매이션
         animTop.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -185,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        animBottom = AnimationUtils.loadAnimation(this,R.anim.translate_bottom);
+        animBottom = AnimationUtils.loadAnimation(this,R.anim.translate_bottom); //url_space등장 애니메이션
         animBottom.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -212,16 +211,16 @@ public class MainActivity extends AppCompatActivity {
     public void webviewinit(){
         webView = (WebView)findViewById(R.id.webview);
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setSupportZoom(true);
-        webView.addJavascriptInterface(new JSMethods(),"MyApp");
+        webSettings.setJavaScriptEnabled(true); //자바스크립트사용
+        webSettings.setSupportZoom(true); //확대사용
+        webView.addJavascriptInterface(new JSMethods(),"MyApp"); //자바스크립트인터페이스를 추가
         webView.setWebViewClient(new WebViewClient(){
-            @Override
+            @Override //아래의 메소드가 없으면 기기내의 브라우저를 사용하여 웹페이지를 연다.(꼭 써주자)
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 return super.shouldOverrideUrlLoading(view, request);
             }
 
-            @Override
+            @Override //웹페이지를 열때 loading중이라는 메세지를 띄울 dialog
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 dialog.setMessage("Loading....");
@@ -230,19 +229,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         webView.setWebChromeClient(new WebChromeClient(){
-            @Override
+            @Override //웹페이지 loading이 끝나면 dialog를 없애줌
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
                 if(newProgress >= 100) dialog.dismiss();
             }
 
-            @Override
+            @Override //자바스크립트를 사용할 때 경고를 띄워줌
             public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
                 result.confirm();
                 return super.onJsAlert(view, url, message, result);
             }
         });
-        webView.loadUrl("http://naver.com");
+        webView.loadUrl("http://naver.com"); //url을 webview로 load해줌
     }
 
     public void onMyClick(View v){
@@ -252,10 +251,10 @@ public class MainActivity extends AppCompatActivity {
             String connect = getText(url);
             url.setText(connect);
             webView.loadUrl(connect);
-            imm.hideSoftInputFromWindow(url.getWindowToken(),0);
+            imm.hideSoftInputFromWindow(url.getWindowToken(),0); //키보드 내려주기
         }
     }
-    @Override
+    @Override //아래의 메소드는 뒤로가기버튼으로 전 페이지로 돌아가는 기능을 원할때 씁니다.
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
@@ -276,12 +275,12 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onKeyDown(keyCode, event);
     }
-    String getText(EditText e){
+    String getText(EditText e){ //url 가져오기
         String url = e.getText().toString();
         url = urlCheck(url);
         return url;
     }
-    String urlCheck(String url){
+    String urlCheck(String url){ //url의 포맷에 맞는지 확인하고 아니면 변환
         if (!(url.contains("http://") || url.contains("https://"))) {
             url = "http://" + url;
         }
